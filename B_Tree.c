@@ -1,12 +1,14 @@
+//author : Hamora Hadi
+
 #include "stdio.h"
 #include "stdlib.h"
 
 #define M 3
 
 typedef struct _node {
-        int    n; /* n < M No. of keys in node will always less than order of B tree */
-        int              keys[M - 1]; /*array of keys*/
-        struct _node *p[M]; /* (n+1 pointers will be in use) */
+        int    n; 
+        int              keys[M - 1]; 
+        struct _node *p[M]; 
 } node;
 node *root = NULL;
 
@@ -94,10 +96,10 @@ int main() {
                 default:
                         printf("Wrong choice\n");
                         break;
-                }/*End of switch*/
-        }/*End of while*/
+                }
+        }
         return 0;
-}/*End of main()*/
+}
 
 void insert(int key) {
         node *newnode;
@@ -113,8 +115,8 @@ void insert(int key) {
                 root->keys[0] = upKey;
                 root->p[0] = uproot;
                 root->p[1] = newnode;
-        }/*End of if */
-}/*End of insert()*/
+        }
+}
 
 KeyStatus ins(node *ptr, int key, int *upKey, node **newnode) {
         node *newPtr, *lastPtr;
@@ -133,26 +135,25 @@ KeyStatus ins(node *ptr, int key, int *upKey, node **newnode) {
         value = ins(ptr->p[pos], key, &newKey, &newPtr);
         if (value != InsertIt)
                 return value;
-        /*If keys in node is less than M-1 where M is order of B tree*/
+        
         if (n < M - 1) {
                 pos = searchPos(newKey, ptr->keys, n);
-                /*Shifting the key and pointer right for inserting the new key*/
+                
                 for (i = n; i>pos; i--) {
                         ptr->keys[i] = ptr->keys[i - 1];
                         ptr->p[i + 1] = ptr->p[i];
                 }
-                /*Key is inserted at exact location*/
+                
                 ptr->keys[pos] = newKey;
                 ptr->p[pos + 1] = newPtr;
-                ++ptr->n; /*incrementing the number of keys in node*/
+                ++ptr->n;
                 return Success;
-        }/*End of if */
-         /*If keys in nodes are maximum and position of node to be inserted is last*/
+        }
         if (pos == M - 1) {
                 lastKey = newKey;
                 lastPtr = newPtr;
         }
-        else { /*If keys in node are maximum and position of node to be inserted is not last*/
+        else { 
                 lastKey = ptr->keys[M - 2];
                 lastPtr = ptr->p[M - 1];
                 for (i = M - 2; i>pos; i--) {
@@ -165,9 +166,9 @@ KeyStatus ins(node *ptr, int key, int *upKey, node **newnode) {
         splitPos = (M - 1) / 2;
         (*upKey) = ptr->keys[splitPos];
 
-        (*newnode) = (node*)malloc(sizeof(node));/*Right node after split*/
-        ptr->n = splitPos; /*No. of keys for left splitted node*/
-        (*newnode)->n = M - 1 - splitPos;/*No. of keys for right splitted node*/
+        (*newnode) = (node*)malloc(sizeof(node));
+        ptr->n = splitPos; 
+        (*newnode)->n = M - 1 - splitPos;
         for (i = 0; i < (*newnode)->n; i++) {
                 (*newnode)->p[i] = ptr->p[i + splitPos + 1];
                 if (i < (*newnode)->n - 1)
@@ -177,7 +178,7 @@ KeyStatus ins(node *ptr, int key, int *upKey, node **newnode) {
         }
         (*newnode)->p[(*newnode)->n] = lastPtr;
         return InsertIt;
-}/*End of ins()*/
+}
 
 void display(node *ptr, int blanks) {
         if (ptr) {
@@ -189,8 +190,8 @@ void display(node *ptr, int blanks) {
                 printf("\n");
                 for (i = 0; i <= ptr->n; i++)
                         display(ptr->p[i], blanks + 10);
-        }/*End of if*/
-}/*End of display()*/
+        }
+}
 
 void search(int key) {
         int pos, i, n;
@@ -209,14 +210,14 @@ void search(int key) {
                 ptr = ptr->p[pos];
         }
         printf("Key %d is not available\n", key);
-}/*End of search()*/
+}
 
 int searchPos(int key, int *key_arr, int n) {
         int pos = 0;
         while (pos < n && key > key_arr[pos])
                 pos++;
         return pos;
-}/*End of searchPos()*/
+}
 
 void DelNode(int key) {
         node *uproot;
@@ -233,8 +234,8 @@ void DelNode(int key) {
                 break;
         default:
                 return;
-        }/*End of switch*/
-}/*End of delnode()*/
+        }
+}
 
 KeyStatus del(node *ptr, int key) {
         int pos, i, pivot, n, min;
@@ -244,13 +245,11 @@ KeyStatus del(node *ptr, int key) {
 
         if (ptr == NULL)
                 return SearchFailure;
-        /*Assigns values of node*/
         n = ptr->n;
         key_arr = ptr->keys;
         p = ptr->p;
-        min = (M - 1) / 2;/*Minimum number of keys*/
-
-                                          //Search for key to delete
+        min = (M - 1) / 2;
+        
         pos = searchPos(key, key_arr, n);
         // p is a leaf
         if (p[0] == NULL) {
@@ -263,9 +262,8 @@ KeyStatus del(node *ptr, int key) {
                         p[i] = p[i + 1];
                 }
                 return --ptr->n >= (ptr == root ? 1 : min) ? Success : LessKeys;
-        }/*End of if */
-
-         //if found key but p is not a leaf
+        }
+        
         if (pos < n && key == key_arr[pos]) {
                 node *qp = p[pos], *qp1;
                 int nkey;
@@ -278,16 +276,16 @@ KeyStatus del(node *ptr, int key) {
                 }/*End of while*/
                 key_arr[pos] = qp->keys[nkey - 1];
                 qp->keys[nkey - 1] = key;
-        }/*End of if */
+        }
         value = del(p[pos], key);
         if (value != LessKeys)
                 return value;
 
         if (pos > 0 && p[pos - 1]->n > min) {
-                pivot = pos - 1; /*pivot for left and right node*/
+                pivot = pos - 1; 
                 lptr = p[pivot];
                 rptr = p[pos];
-                /*Assigns values for right node*/
+               
                 rptr->p[rptr->n + 1] = rptr->p[rptr->n];
                 for (i = rptr->n; i>0; i--) {
                         rptr->keys[i] = rptr->keys[i - 1];
@@ -298,13 +296,12 @@ KeyStatus del(node *ptr, int key) {
                 rptr->p[0] = lptr->p[lptr->n];
                 key_arr[pivot] = lptr->keys[--lptr->n];
                 return Success;
-        }/*End of if */
-         //if (posn > min)
+        }
         if (pos < n && p[pos + 1]->n > min) {
-                pivot = pos; /*pivot for left and right node*/
+                pivot = pos; 
                 lptr = p[pivot];
                 rptr = p[pivot + 1];
-                /*Assigns values for left node*/
+                
                 lptr->keys[lptr->n] = key_arr[pivot];
                 lptr->p[lptr->n + 1] = rptr->p[0];
                 key_arr[pivot] = rptr->keys[0];
@@ -313,11 +310,10 @@ KeyStatus del(node *ptr, int key) {
                 for (i = 0; i < rptr->n; i++) {
                         rptr->keys[i] = rptr->keys[i + 1];
                         rptr->p[i] = rptr->p[i + 1];
-                }/*End of for*/
+                }
                 rptr->p[rptr->n] = rptr->p[rptr->n + 1];
                 return Success;
-        }/*End of if */
-
+        }
         if (pos == n)
                 pivot = pos - 1;
         else
@@ -325,7 +321,7 @@ KeyStatus del(node *ptr, int key) {
 
         lptr = p[pivot];
         rptr = p[pivot + 1];
-        /*merge right node with left node*/
+        
         lptr->keys[lptr->n] = key_arr[pivot];
         lptr->p[lptr->n + 1] = rptr->p[0];
         for (i = 0; i < rptr->n; i++) {
@@ -333,22 +329,19 @@ KeyStatus del(node *ptr, int key) {
                 lptr->p[lptr->n + 2 + i] = rptr->p[i + 1];
         }
         lptr->n = lptr->n + rptr->n + 1;
-        free(rptr); /*Remove right node*/
+        free(rptr); 
         for (i = pos + 1; i < n; i++) {
                 key_arr[i - 1] = key_arr[i];
                 p[i] = p[i + 1];
         }
         return --ptr->n >= (ptr == root ? 1 : min) ? Success : LessKeys;
-}/*End of del()*/
+}
 
 void eatline(void) {
         char c;
         while ((c = getchar()) != '\n');
 }
 
-/* Function to display each key in the tree in sorted order (in-order traversal)
-@param struct node *ptr, the pointer to the node you are currently working with
-*/
 void inorder(node *ptr) {
         if (ptr) {
                 if (ptr->n >= 1) {
@@ -363,9 +356,6 @@ void inorder(node *ptr) {
         }
 }
 
-/* Function that returns the total number of keys in the tree.
-@param struct node *ptr, the pointer to the node you are currently working with
-*/
 int totalKeys(node *ptr) {
         if (ptr) {
                 int count = 1;
@@ -379,16 +369,10 @@ int totalKeys(node *ptr) {
         return 0;
 }
 
-/* Function that prints the total number of keys in the tree.
-@param struct node *ptr, the pointer to the node you are currently working with
-*/
 void printTotal(node *ptr) {
         printf("%d\n", totalKeys(ptr));
 }
 
-/* Function that returns the smallest key found in the tree.
-@param struct node *ptr, the pointer to the node you are currently working with
-*/
 int getMin(node *ptr) {
         if (ptr) {
                 int min;
@@ -399,9 +383,6 @@ int getMin(node *ptr) {
         return 0;
 }
 
-/* Function that returns the largest key found in the tree.
-@param struct node *ptr, the pointer to the node you are currently working with
-*/
 int getMax(node *ptr) {
         if (ptr) {
                 int max;
@@ -418,18 +399,10 @@ int getMax(node *ptr) {
         return 0;
 }
 
-/* Function that prints the smallest and largest keys found in the tree.
-@param struct node *ptr, the pointer to the node you are currently working with
-*/
 void getMinMax(node *ptr) {
         printf("%d %d\n", getMin(ptr), getMax(ptr));
 }
 
-/* Function that determines the largest number.
-@param int, integer to compare.
-@param int, integer to compare.
-@param int, integer to compare.
-*/
 int max(int first, int second, int third) {
         int max = first;
         if (second > max) max = second;
@@ -437,9 +410,6 @@ int max(int first, int second, int third) {
         return max;
 }
 
-/*Function that finds the maximum level in the node and returns it as an integer.
-@param struct node *ptr, the node to find the maximum level for.
-*/
 int maxLevel(node *ptr) {
         if (ptr) {
                 int l = 0, mr = 0, r = 0, max_depth;
@@ -454,9 +424,6 @@ int maxLevel(node *ptr) {
         return 0;
 }
 
-/*Function that prints the maximum level in the tree.
-@param struct node *ptr, the tree to find the maximum level for.
-*/
 void printMaxLevel(node *ptr) {
         int max = maxLevel(ptr) - 1;
         if (max == -1) printf("tree is empty\n");
