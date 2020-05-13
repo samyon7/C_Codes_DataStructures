@@ -1,14 +1,4 @@
-/*
-	Name: Brigits.exe
-	Copyright: Ethiopians
-	Author: Hamora Hadi
-	Date: 21/03/20 22:56
-	Description: 	
-		This program is the Stack System for any product.
-		In this case, the product has the identifier, there are 'name' and 'RollNo'!
-		This program uses LIFO technique.
-*/
-
+//author : Hamora Hadi
 
 #include<stdio.h>
 #include<stdlib.h>
