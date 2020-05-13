@@ -1,3 +1,5 @@
+//author : Hamora Hadi
+
 #include <stdio.h>
 
 int main(){
