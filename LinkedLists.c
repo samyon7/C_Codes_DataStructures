@@ -1,3 +1,6 @@
+//This is the submission for hackerrank!
+//Hope this help!
+
 #include <assert.h>
 #include <limits.h>
 #include <math.h>
